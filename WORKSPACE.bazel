@@ -1,0 +1,196 @@
+# Donk Project
+# Copyright (c) 2021 Warriorstar Orion <orion@snowfrost.garden>
+# SPDX-License-Identifier: MIT
+workspace(name = "donk_buildbase")
+
+# This workspace provides a simple way to build Donk Project targets without
+# having to download individual repositories separately. It achieves this by
+# always pointing the relevant dependencies to the HEAD version of their
+# repository archives.
+#
+# This is not necessarily the "best" strategy for building Donk, especially if
+# one is planning on making source code contributions. In those cases it would
+# be more sensible to clone the relevant repository locally, and instead using
+# local_repository() to point the workspace names to the filesystem. One can see
+# an example of how this is done in the individual library repositories, notably
+# donk/mapping and donk/interpreter.
+
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+
+# Third-party dependencies
+
+http_archive(
+    name = "com_google_absl",
+    sha256 = "8400c511d64eb4d26f92c5ec72535ebd0f843067515244e8b50817b0786427f9",
+    strip_prefix = "abseil-cpp-c512f118dde6ffd51cb7d8ac8804bbaf4d266c3a",
+    urls = [
+        "https://github.com/abseil/abseil-cpp/archive/c512f118dde6ffd51cb7d8ac8804bbaf4d266c3a.zip",
+    ],
+)
+
+http_archive(
+    name = "wso_third_party_buildfiles",
+    strip_prefix = "third_party_buildfiles-main",
+    urls = [
+        "https://github.com/warriorstar-orion/third_party_buildfiles/archive/main.tar.gz",
+    ],
+)
+
+http_archive(
+    name = "fmtlib",
+    build_file = "@wso_third_party_buildfiles//:fmtlib.BUILD",
+    sha256 = "decfdf9ad274070fa85f26407b816f5a4d82205ae86bac1990be658d0795ea4d",
+    strip_prefix = "fmt-7.0.3",
+    urls = ["https://github.com/fmtlib/fmt/releases/download/7.0.3/fmt-7.0.3.zip"],
+)
+
+http_archive(
+    name = "spdlog",
+    build_file = "@wso_third_party_buildfiles//:spdlog.BUILD",
+    sha256 = "f0114a4d3c88be9e696762f37a7c379619443ce9d668546c61b21d41affe5b62",
+    strip_prefix = "spdlog-1.7.0",
+    urls = ["https://github.com/gabime/spdlog/archive/v1.7.0.tar.gz"],
+)
+
+http_archive(
+    name = "peglib",
+    build_file = "@wso_third_party_buildfiles//:peglib.BUILD",
+    strip_prefix = "cpp-peglib-0.1.13",
+    sha256 = "f83ddc4bcd3329c64de91d460af6614611cad4eae19173648145372e29ec1436",
+    urls = [
+        "https://github.com/yhirose/cpp-peglib/archive/v0.1.13.zip",
+    ],
+)
+
+http_archive(
+    name = "libpng",
+    build_file = "@wso_third_party_buildfiles//:libpng.BUILD",
+    sha256 = "7f415186d38ca71c23058386d7cf5135c8beda821ee1beecdc2a7a26c0356615",
+    strip_prefix = "libpng-1.2.57",
+    urls = [
+        "https://mirror.bazel.build/github.com/glennrp/libpng/archive/v1.2.57.tar.gz",
+        "https://github.com/glennrp/libpng/archive/v1.2.57.tar.gz",
+    ],
+)
+
+http_archive(
+    name = "entt",
+    strip_prefix = "entt-18832fcb3765e02e66b033a0cf723683762463c0",
+    urls = [
+      "https://github.com/skypjack/entt/archive/18832fcb3765e02e66b033a0cf723683762463c0.tar.gz",
+    ],
+)
+
+http_archive(
+    name = "spacemandmm",
+    strip_prefix = "SpacemanDMM-pb2",
+    urls = ["https://github.com/warriorstar-orion/SpacemanDMM/archive/pb2.tar.gz"],
+)
+
+http_archive(
+    name = "vasker",
+    strip_prefix = "vasker-main",
+    urls = ["https://github.com/warriorstar-orion/vasker/archive/main.tar.gz"],
+)
+
+# Toolchains and language features
+
+http_archive(
+    name = "com_google_protobuf",
+    sha256 = "bf0e5070b4b99240183b29df78155eee335885e53a8af8683964579c214ad301",
+    strip_prefix = "protobuf-3.14.0",
+    urls = ["https://github.com/protocolbuffers/protobuf/archive/v3.14.0.zip"],
+)
+
+load("@com_google_protobuf//:protobuf_deps.bzl", "protobuf_deps")
+
+protobuf_deps()
+
+http_archive(
+    name = "io_bazel_rules_go",
+    sha256 = "207fad3e6689135c5d8713e5a17ba9d1290238f47b9ba545b63d9303406209c6",
+    urls = [
+        "https://mirror.bazel.build/github.com/bazelbuild/rules_go/releases/download/v0.24.7/rules_go-v0.24.7.tar.gz",
+        "https://github.com/bazelbuild/rules_go/releases/download/v0.24.7/rules_go-v0.24.7.tar.gz",
+    ],
+)
+
+load("@io_bazel_rules_go//go:deps.bzl", "go_register_toolchains", "go_rules_dependencies")
+
+go_rules_dependencies()
+
+go_register_toolchains()
+
+# Donk Project dependencies
+
+http_archive(
+    name = "donk_core",
+    strip_prefix = "core-main",
+    urls = [
+        "https://github.com/donk-project/core/archive/main.tar.gz",
+    ],
+)
+
+http_archive(
+    name = "donk_api",
+    strip_prefix = "api-main",
+    urls = [
+        "https://github.com/donk-project/api/archive/main.tar.gz",
+    ],
+)
+
+http_archive(
+    name = "donk_image",
+    strip_prefix = "image-main",
+    urls = [
+        "https://github.com/donk-project/image/archive/main.tar.gz",
+    ],
+)
+
+http_archive(
+    name = "donk_mapping",
+    strip_prefix = "mapping-main",
+    urls = [
+        "https://github.com/donk-project/mapping/archive/main.tar.gz",
+    ],
+)
+
+http_archive(
+    name = "donk_transpiler",
+    strip_prefix = "transpiler-main",
+    urls = [
+        "https://github.com/donk-project/transpiler/archive/main.tar.gz",
+    ],
+)
+
+http_archive(
+    name = "donk_interpreter",
+    strip_prefix = "interpreter-main",
+    urls = [
+        "https://github.com/donk-project/interpreter/archive/main.tar.gz",
+    ],
+)
+
+# @tgcc is the representation of any transpiled codebase. The 'path' argument
+# below assumes that it is in ./tgcc, but this can be changed to any absolute
+# path where the transpiled code was output to.
+
+new_local_repository(
+    name = "tgcc",
+    build_file_content = """
+load("@rules_cc//cc:defs.bzl", "cc_library")
+
+cc_library(
+    name = "tgcc",
+    srcs = glob(["**/*.cc"]),
+    hdrs = glob(["**/*.h"]),
+    deps = [
+        "@donk_api//:api",
+        "@donk_core//:core",
+    ],
+    include_prefix = "tgcc",
+    visibility = ["//visibility:public"],
+)
+""",
+    path = "tgcc",
+)
